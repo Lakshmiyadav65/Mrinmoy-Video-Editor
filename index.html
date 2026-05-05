@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mrinmoy — Video Editor & Colorist · Reel 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0a09;
+    --surface:#161311;
+    --surface-2:#1f1b18;
+    --paper:#f4ede0;
+    --paper-dim:#a8a195;
+    --line:rgba(244,237,224,.12);
+    --line-strong:rgba(244,237,224,.25);
+    --accent:#ff5b2e;
+    --accent-soft:#ffb87a;
+    --gold:#d9b370;
+    --teal:#2f5d63;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--paper);
+    font-family:'Inter Tight',system-ui,sans-serif;
+    font-weight:400;
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent);color:var(--bg)}
+
+  /* subtle film grain */
+  body::after{
+    content:"";
+    position:fixed;inset:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .12 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity:.6;
+    pointer-events:none;
+    z-index:9000;
+    mix-blend-mode:overlay;
+  }
+
+  /* utility */
+  .mono{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .container{max-width:1440px;margin:0 auto;padding:0 2.5rem}
+
+  /* ─────────────────────────────────────
+     NAV
+  ───────────────────────────────────── */
+  nav{
+    position:fixed;top:0;left:0;right:0;
+    z-index:100;
+    padding:1.4rem 2.5rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:linear-gradient(to bottom,rgba(12,10,9,.85),transparent);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .logo{
+    display:flex;align-items:center;gap:.7rem;
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.35rem;
+    letter-spacing:-.02em;
+  }
+  .logo .mark{
+    width:32px;height:32px;
+    border:1.5px solid var(--paper);
+    border-radius:50%;
+    display:grid;place-items:center;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:.9rem;
+    font-weight:400;
+  }
+  .logo i{font-style:italic;color:var(--accent-soft)}
+
+  .nav-right{display:flex;align-items:center;gap:2rem}
+  .nav-links{display:flex;gap:1.8rem}
+  .nav-links a{
+    color:var(--paper);text-decoration:none;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    position:relative;transition:color .25s;
+  }
+  .nav-links a::before{
+    content:attr(data-num);
+    color:var(--accent);
+    margin-right:.5rem;
+  }
+  .nav-links a:hover{color:var(--accent-soft)}
+
+  .nav-cta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--bg);background:var(--paper);
+    padding:.7rem 1.1rem;border-radius:100px;
+    text-decoration:none;
+    display:inline-flex;align-items:center;gap:.5rem;
+    transition:all .3s;
+  }
+  .nav-cta:hover{background:var(--accent);color:var(--paper)}
+  .nav-cta .pulse{
+    width:6px;height:6px;border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 0 0 rgba(34,197,94,.6);
+    animation:pulseDot 2s ease-in-out infinite;
+  }
+  @keyframes pulseDot{
+    0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
+    50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}
+  }
+
+  /* ─────────────────────────────────────
+     HERO
+  ───────────────────────────────────── */
+  .hero{
+    min-height:100vh;
+    padding:8rem 2.5rem 2rem;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    gap:2rem;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .hero-tag{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:var(--paper-dim);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    border-top:1px solid var(--line);
+    padding-top:1rem;
+  }
+  .hero-tag .tc{color:var(--accent)}
+  .hero-tag .live{display:inline-flex;align-items:center;gap:.5rem}
+  .hero-tag .live::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--accent);
+    animation:blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink{50%{opacity:.2}}
+
+  .hero-title{
+    align-self:center;
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(4rem,13vw,15rem);
+    line-height:.9;
+    letter-spacing:-.04em;
+  }
+  .hero-title .word{
+    display:inline-block;
+    overflow:hidden;
+    vertical-align:top;
+  }
+  .hero-title .word>span{
+    display:inline-block;
+    transform:translateY(110%);
+    animation:rise 1.1s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .hero-title .word:nth-child(1)>span{animation-delay:.15s}
+  .hero-title .word:nth-child(2)>span{animation-delay:.3s}
+  .hero-title .word:nth-child(3)>span{animation-delay:.45s}
+  @keyframes rise{to{transform:translateY(0)}}
+  .hero-title em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--accent);
+    font-family:'Fraunces',serif;
+  }
+
+  .hero-bottom{
+    display:grid;
+    grid-template-columns:1.2fr 1fr 1fr 1fr;
+    gap:3rem;
+    padding-top:1.5rem;
+    border-top:1px solid var(--line);
+    align-items:end;
+  }
+  .hero-lede{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.15rem;
+    line-height:1.5;
+    color:var(--paper);
+    max-width:36ch;
+  }
+  .hero-lede em{font-style:italic;color:var(--accent-soft)}
+  .hero-stat{
+    border-left:1px solid var(--line);
+    padding-left:1.5rem;
+  }
+  .hero-stat .label{
+    color:var(--paper-dim);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    margin-bottom:.6rem;
+  }
+  .hero-stat .num{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:3rem;
+    letter-spacing:-.02em;
+    line-height:1;
+  }
+  .hero-stat .num sup{
+    font-size:.4em;color:var(--accent-soft);
+    margin-left:.2em;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:500;letter-spacing:.1em;
+    vertical-align:super;
+  }
+
+  /* featured film viewer */
+  .featured-frame{
+    position:absolute;
+    right:2.5rem;top:6.5rem;
+    width:340px;height:200px;
+    border:1px solid var(--line-strong);
+    background:var(--surface);
+    overflow:hidden;
+    z-index:5;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .featured-frame::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse at 30% 40%,#ff7a3d 0%,#7a1a08 50%,#1a0806 100%);
+  }
+  .featured-frame::after{
+    content:"";position:absolute;
+    left:30%;top:35%;width:40%;height:40%;
+    background:radial-gradient(circle,#ffd49a 0%,transparent 70%);
+    filter:blur(20px);
+  }
+  .ff-overlay{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:.8rem 1rem;
+    z-index:2;
+    color:var(--paper);
+  }
+  .ff-overlay .top{
+    display:flex;justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  }
+  .ff-overlay .top .rec{
+    display:inline-flex;align-items:center;gap:.4rem;color:var(--accent);
+  }
+  .ff-overlay .top .rec::before{
+    content:"";width:6px;height:6px;background:var(--accent);border-radius:50%;
+    animation:blink 1s ease-in-out infinite;
+  }
+  .ff-overlay .bottom{
+    display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  .ff-overlay .play{
+    width:42px;height:42px;border:1.5px solid var(--paper);
+    border-radius:50%;display:grid;place-items:center;
+    cursor:pointer;transition:all .3s;
+  }
+  .ff-overlay .play:hover{background:var(--paper);color:var(--bg)}
+  .ff-overlay .play::before{
+    content:"";border-style:solid;border-width:6px 0 6px 9px;
+    border-color:transparent transparent transparent currentColor;
+    margin-left:3px;
+  }
+  .ff-overlay .meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+    text-align:right;line-height:1.5;
+    color:var(--paper-dim);
+  }
+  .ff-overlay .meta b{color:var(--paper);display:block;font-weight:500;font-size:11px;letter-spacing:.08em;margin-bottom:.1rem;text-transform:none;font-family:'Fraunces',serif;font-style:italic;font-weight:400}
+  .ff-progress{
+    position:absolute;left:0;right:0;bottom:0;
+    height:3px;background:rgba(244,237,224,.15);
+    z-index:3;
+  }
+  .ff-progress::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;
+    width:34%;background:var(--accent);
+    box-shadow:0 0 8px var(--accent);
+  }
+
+  /* ─────────────────────────────────────
+     STATS BAND
+  ───────────────────────────────────── */
+  .stats-band{
+    background:var(--paper);
+    color:var(--bg);
+    padding:2rem 0;
+    border-top:1px solid var(--bg);
+    border-bottom:1px solid var(--bg);
+    overflow:hidden;
+  }
+  .stats-track{
+    display:flex;
+    white-space:nowrap;
+    animation:slide 50s linear infinite;
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:clamp(2rem,4.5vw,3.5rem);
+    line-height:1;
+    letter-spacing:-.03em;
+  }
+  .stats-track span{
+    padding:0 2.5rem;
+    display:inline-flex;align-items:center;gap:1.5rem;
+  }
+  .stats-track i{font-style:italic;color:var(--accent)}
+  .stats-track .pip{
+    width:10px;height:10px;background:var(--accent);border-radius:50%;
+    display:inline-block;
+  }
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ─────────────────────────────────────
+     SECTION HEADERS
+  ───────────────────────────────────── */
+  .section-head{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:2rem;
+    align-items:end;
+    margin-bottom:4rem;
+    padding-bottom:1.2rem;
+    border-bottom:1px solid var(--line);
+  }
+  .section-head .num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;letter-spacing:.18em;
+    color:var(--accent);
+    text-transform:uppercase;
+  }
+  .section-head .num b{color:var(--paper);font-weight:500;margin-right:.5rem}
+  .section-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(2.6rem,6vw,5rem);
+    line-height:.95;
+    letter-spacing:-.035em;
+  }
+  .section-head h2 em{font-style:italic;color:var(--accent)}
+  .section-head .aside{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+    text-align:right;
+    line-height:1.6;
+  }
+  .section-head .aside b{color:var(--paper);font-weight:500;display:block}
+
+  /* ─────────────────────────────────────
+     WORK GRID — magazine layout
+  ───────────────────────────────────── */
+  .work-section{padding:7rem 0 6rem}
+
+  .work-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:2rem;
+  }
+
+  .project{
+    position:relative;
+    text-decoration:none;color:inherit;
+    cursor:pointer;
+    display:block;
+  }
+  .project .frame{
+    position:relative;
+    overflow:hidden;
+    background:var(--surface);
+    border:1px solid var(--line);
+  }
+  .project .image{
+    position:absolute;inset:0;
+    transition:transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .project:hover .image{transform:scale(1.06)}
+
+  /* generated cinematic stills */
+  .img-1{background:radial-gradient(ellipse at 35% 65%,#ff7a3d 0%,#a82a10 35%,#1a0806 100%)}
+  .img-1::before{content:"";position:absolute;left:25%;top:30%;width:50%;height:50%;background:radial-gradient(circle,#ffd49a 0%,transparent 70%);filter:blur(30px)}
+
+  .img-2{background:linear-gradient(170deg,#1a3a4a 0%,#0a1a22 100%)}
+  .img-2::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 14px,rgba(255,184,122,.18) 14px,rgba(255,184,122,.18) 15px)}
+  .img-2::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:90px;height:90px;background:#d9b370;border-radius:50%;box-shadow:0 0 60px #d9b370,inset 0 -10px 30px rgba(0,0,0,.4)}
+
+  .img-3{background:linear-gradient(180deg,#3a3530 0%,#0c0a09 100%)}
+  .img-3::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1px;height:60%;background:linear-gradient(to bottom,transparent,#f4ede0,transparent)}
+  .img-3::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:30%;height:30%;border:1px solid rgba(244,237,224,.4)}
+
+  .img-4{background:linear-gradient(45deg,#2a1a14 0%,#ff5b2e 55%,#ffd49a 100%)}
+  .img-4::before{content:"";position:absolute;left:0;right:0;bottom:0;height:50%;background:linear-gradient(180deg,transparent,#0c0a09)}
+
+  .img-5{background:radial-gradient(circle at 70% 30%,#f4ede0 0%,#a8a195 35%,#2a2520 90%)}
+  .img-5::before{content:"";position:absolute;inset:8%;border:1px solid rgba(0,0,0,.25)}
+
+  .img-6{background:linear-gradient(135deg,#7a1a0e 0%,#ff5b2e 50%,#d9b370 100%)}
+  .img-6::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,rgba(0,0,0,.5),transparent 50%)}
+
+  .img-7{background:linear-gradient(180deg,#0a1a22 0%,#2f5d63 100%)}
+  .img-7::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.2) 3px,rgba(0,0,0,.2) 4px)}
+
+  /* play badge */
+  .play-badge{
+    position:absolute;left:1.2rem;top:1.2rem;
+    z-index:3;
+    width:44px;height:44px;
+    border:1.5px solid var(--paper);
+    border-radius:50%;
+    background:rgba(12,10,9,.4);
+    backdrop-filter:blur(6px);
+    display:grid;place-items:center;
+    color:var(--paper);
+    transition:all .3s;
+  }
+  .play-badge::before{
+    content:"";border-style:solid;border-width:5px 0 5px 8px;
+    border-color:transparent transparent transparent currentColor;
+    margin-left:2px;
+  }
+  .project:hover .play-badge{background:var(--accent);border-color:var(--accent)}
+
+  .timecode-pill{
+    position:absolute;right:1.2rem;top:1.2rem;
+    z-index:3;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.12em;
+    background:rgba(12,10,9,.7);
+    backdrop-filter:blur(4px);
+    color:var(--paper);
+    padding:.35rem .6rem;
+    border:1px solid rgba(244,237,224,.2);
+  }
+
+  .project-info{
+    padding:1.2rem 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:1rem;
+  }
+  .project-title{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.65rem;
+    line-height:1.05;
+    letter-spacing:-.02em;
+  }
+  .project-title em{font-style:italic;color:var(--accent-soft);font-weight:400}
+  .project-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+    line-height:1.6;
+    text-align:right;
+    flex-shrink:0;
+  }
+  .project-meta b{color:var(--paper);font-weight:500;display:block}
+
+  /* layout sizes */
+  .p-hero{grid-column:span 8;aspect-ratio:16/9}
+  .p-side{grid-column:span 4;aspect-ratio:4/5}
+  .p-half{grid-column:span 6;aspect-ratio:4/3}
+  .p-third{grid-column:span 4;aspect-ratio:4/5}
+  .p-wide{grid-column:span 12;aspect-ratio:21/9}
+  .project .frame{height:100%}
+
+  /* ─────────────────────────────────────
+     CASE STUDY (featured)
+  ───────────────────────────────────── */
+  .case{
+    background:var(--surface);
+    padding:7rem 0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .case::before{
+    content:"CASE 01 / CASE 01 / CASE 01 / CASE 01 / ";
+    position:absolute;top:1.5rem;left:0;right:0;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:200;
+    font-size:9rem;
+    line-height:1;
+    color:rgba(244,237,224,.025);
+    white-space:nowrap;
+    pointer-events:none;
+    letter-spacing:-.04em;
+  }
+  .case-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5rem;
+    align-items:center;
+    position:relative;z-index:2;
+  }
+  .case-visual{
+    aspect-ratio:4/5;
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--line-strong);
+    background:linear-gradient(135deg,#ff5b2e 0%,#7a1a0e 60%,#1a0806 100%);
+  }
+  .case-visual::before{
+    content:"";position:absolute;
+    left:30%;top:25%;width:50%;height:50%;
+    background:radial-gradient(circle,#ffd49a 0%,transparent 65%);
+    filter:blur(40px);
+  }
+  .case-visual .stamp{
+    position:absolute;left:1.5rem;top:1.5rem;
+    width:80px;height:80px;
+    border:1px solid var(--paper);
+    border-radius:50%;
+    display:grid;place-items:center;
+    color:var(--paper);
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:.75rem;
+    text-align:center;
+    line-height:1.2;
+    transform:rotate(-12deg);
+    backdrop-filter:blur(4px);
+    background:rgba(0,0,0,.15);
+  }
+  .case-visual .stamp b{display:block;font-style:normal;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;margin-bottom:.2rem;font-weight:500}
+
+  .case-visual .play{
+    position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    width:80px;height:80px;
+    border:1.5px solid var(--paper);
+    border-radius:50%;
+    display:grid;place-items:center;
+    color:var(--paper);
+    cursor:pointer;
+    transition:all .35s;
+    backdrop-filter:blur(6px);
+    background:rgba(0,0,0,.2);
+  }
+  .case-visual .play::before{
+    content:"";border-style:solid;border-width:10px 0 10px 16px;
+    border-color:transparent transparent transparent currentColor;
+    margin-left:4px;
+  }
+  .case-visual .play:hover{background:var(--paper);color:var(--bg);transform:translate(-50%,-50%) scale(1.08)}
+
+  .case-text .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:1.5rem;
+  }
+  .case-text h3{
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(2.2rem,4vw,3.8rem);
+    line-height:1;
+    letter-spacing:-.035em;
+    margin-bottom:1.5rem;
+  }
+  .case-text h3 em{font-style:italic;color:var(--accent)}
+  .case-text .director{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:300;
+    color:var(--paper-dim);
+    font-size:1.1rem;
+    margin-bottom:2rem;
+  }
+  .case-text p{
+    font-size:1.05rem;
+    line-height:1.65;
+    color:var(--paper);
+    margin-bottom:1.2rem;
+    max-width:50ch;
+  }
+  .case-text p em{font-style:italic;color:var(--accent-soft)}
+
+  .case-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1rem;
+    margin-top:2.5rem;
+    padding-top:2rem;
+    border-top:1px solid var(--line);
+  }
+  .case-stat{
+    border-left:1px solid var(--line);
+    padding-left:1rem;
+  }
+  .case-stat .v{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.8rem;
+    line-height:1;
+    letter-spacing:-.02em;
+    margin-bottom:.3rem;
+  }
+  .case-stat .l{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+
+  /* ─────────────────────────────────────
+     PROCESS
+  ───────────────────────────────────── */
+  .process{padding:7rem 0;position:relative}
+  .process-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:1.5rem;
+  }
+  .step{
+    border:1px solid var(--line);
+    padding:2rem 1.6rem 1.8rem;
+    position:relative;
+    transition:all .4s;
+    background:var(--surface);
+  }
+  .step:hover{
+    background:var(--surface-2);
+    border-color:var(--accent);
+    transform:translateY(-6px);
+  }
+  .step:hover .step-num{color:var(--accent)}
+  .step .step-num{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:200;
+    font-size:4rem;
+    line-height:1;
+    color:var(--paper-dim);
+    margin-bottom:1.5rem;
+    transition:color .4s;
+  }
+  .step h4{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.4rem;
+    letter-spacing:-.02em;
+    line-height:1.15;
+    margin-bottom:.8rem;
+  }
+  .step h4 em{font-style:italic;color:var(--accent-soft)}
+  .step p{
+    font-size:.92rem;
+    line-height:1.6;
+    color:var(--paper-dim);
+  }
+  .step .tag{
+    margin-top:1.5rem;
+    padding-top:1rem;
+    border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+  .step .tag b{color:var(--paper);font-weight:500}
+
+  /* ─────────────────────────────────────
+     QUOTE / TESTIMONIAL
+  ───────────────────────────────────── */
+  .quote-section{
+    padding:8rem 0;
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .quote-block{
+    max-width:1100px;
+    margin:0 auto;
+    text-align:center;
+    padding:0 2rem;
+  }
+  .quote-block .marks{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:200;
+    font-size:6rem;
+    line-height:.5;
+    color:var(--accent);
+    margin-bottom:1.5rem;
+  }
+  .quote-block blockquote{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:clamp(1.6rem,3.4vw,2.6rem);
+    line-height:1.3;
+    letter-spacing:-.02em;
+  }
+  .quote-block blockquote em{font-style:italic;color:var(--accent-soft)}
+  .quote-block .attribution{
+    margin-top:3rem;
+    display:inline-flex;align-items:center;gap:1rem;
+    padding-top:1.5rem;
+  }
+  .quote-block .avatar{
+    width:48px;height:48px;border-radius:50%;
+    background:linear-gradient(135deg,#ff5b2e,#7a1a0e);
+    display:grid;place-items:center;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    color:var(--paper);
+    font-size:1.1rem;
+  }
+  .quote-block .who{
+    text-align:left;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+    line-height:1.6;
+  }
+  .quote-block .who b{color:var(--paper);font-weight:500;display:block}
+
+  /* ─────────────────────────────────────
+     ABOUT
+  ───────────────────────────────────── */
+  .about{padding:7rem 0}
+  .about-grid{
+    display:grid;
+    grid-template-columns:1fr 1.4fr;
+    gap:5rem;
+    align-items:start;
+  }
+  .portrait{
+    aspect-ratio:4/5;
+    position:relative;
+    border:1px solid var(--line-strong);
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 35% 30%,rgba(255,184,122,.45),transparent 50%),
+      linear-gradient(160deg,#2f5d63 0%,#0c0a09 90%);
+  }
+  .portrait::before{
+    content:"";position:absolute;inset:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/></svg>");
+    mix-blend-mode:overlay;
+  }
+  .portrait::after{
+    content:"M";
+    position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:200;
+    font-size:14rem;
+    color:rgba(244,237,224,.92);
+    letter-spacing:-.05em;
+    line-height:1;
+  }
+  .portrait-meta{
+    margin-top:1rem;
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+
+  .about-right h3{
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(2.2rem,4.2vw,4rem);
+    line-height:1;
+    letter-spacing:-.035em;
+    margin-bottom:2rem;
+  }
+  .about-right h3 em{font-style:italic;color:var(--accent)}
+  .about-right p{
+    font-size:1.08rem;
+    line-height:1.65;
+    color:var(--paper);
+    margin-bottom:1.4rem;
+  }
+  .about-right p em{font-style:italic;color:var(--accent-soft)}
+
+  .toolset{
+    margin-top:3rem;
+    padding-top:2rem;
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:.6rem 3rem;
+  }
+  .toolset .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:.7rem 0;
+    border-bottom:1px dotted var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  }
+  .toolset .row span:first-child{color:var(--paper-dim)}
+  .toolset .row b{color:var(--paper);font-weight:500}
+
+  /* ─────────────────────────────────────
+     AWARDS / CLIENTS
+  ───────────────────────────────────── */
+  .recognition{
+    padding:6rem 0;
+    border-top:1px solid var(--line);
+  }
+  .recog-grid{
+    display:grid;
+    grid-template-columns:1fr 1.6fr;
+    gap:5rem;
+    align-items:start;
+  }
+  .recog-grid h3{
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(2rem,4vw,3.4rem);
+    line-height:1;
+    letter-spacing:-.03em;
+  }
+  .recog-grid h3 em{font-style:italic;color:var(--accent)}
+  .award-list{display:flex;flex-direction:column}
+  .award{
+    display:grid;
+    grid-template-columns:80px 1fr 1fr 80px;
+    gap:1.5rem;
+    align-items:center;
+    padding:1.4rem 0;
+    border-top:1px solid var(--line);
+    transition:padding .4s;
+  }
+  .award:hover{padding:1.8rem 0}
+  .award:last-child{border-bottom:1px solid var(--line)}
+  .award .yr{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;
+    color:var(--accent);
+  }
+  .award .ti{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.25rem;
+    letter-spacing:-.015em;
+  }
+  .award .ti em{font-style:italic}
+  .award .org{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+  .award .res{
+    text-align:right;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:1rem;
+    color:var(--accent-soft);
+  }
+
+  /* ─────────────────────────────────────
+     CONTACT / END CARD
+  ───────────────────────────────────── */
+  .end{
+    padding:8rem 2.5rem 4rem;
+    background:var(--accent);
+    color:var(--paper);
+    position:relative;
+    overflow:hidden;
+  }
+  .end::before{
+    content:"";position:absolute;inset:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/></svg>");
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+  .end-grid{
+    position:relative;z-index:2;
+    max-width:1440px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:4rem;
+    align-items:end;
+  }
+  .end-stamp{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    padding:.5rem 1rem;
+    border:1px solid var(--paper);
+    border-radius:100px;
+    margin-bottom:2rem;
+  }
+  .end h2{
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(3rem,9vw,9rem);
+    line-height:.88;
+    letter-spacing:-.04em;
+    margin-bottom:2rem;
+  }
+  .end h2 em{font-style:italic;color:#0c0a09}
+  .end-right p{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:1.3rem;
+    line-height:1.4;
+    margin-bottom:2rem;
+    color:rgba(244,237,224,.9);
+  }
+  .cta-stack{display:flex;flex-direction:column;gap:.5rem}
+  .cta-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1.4rem 1.6rem;
+    border:1px solid var(--paper);
+    text-decoration:none;
+    color:var(--paper);
+    transition:all .35s;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  }
+  .cta-row:hover{background:var(--bg);border-color:var(--bg)}
+  .cta-row b{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:1.1rem;
+    letter-spacing:0;
+    text-transform:none;
+  }
+
+  /* ─────────────────────────────────────
+     FOOTER
+  ───────────────────────────────────── */
+  footer{
+    background:var(--bg);
+    padding:4rem 2.5rem 2rem;
+  }
+  .foot-grid{
+    max-width:1440px;margin:0 auto;
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:3rem;
+    margin-bottom:4rem;
+  }
+  .foot-brand{
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(2.5rem,6vw,5rem);
+    line-height:.9;
+    letter-spacing:-.04em;
+  }
+  .foot-brand em{font-style:italic;color:var(--accent)}
+  .foot-col h6{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--paper-dim);
+    font-weight:500;
+    margin-bottom:1.2rem;
+  }
+  .foot-col a, .foot-col p{
+    display:block;
+    font-family:'Inter Tight',sans-serif;
+    font-size:.95rem;
+    color:var(--paper);
+    text-decoration:none;
+    padding:.45rem 0;
+    border-bottom:1px solid var(--line);
+    transition:color .25s, padding .25s;
+  }
+  .foot-col a:hover{color:var(--accent);padding-left:.4rem}
+  .foot-bottom{
+    max-width:1440px;margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:1rem;
+    padding-top:2rem;
+    border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+
+  /* ─────────────────────────────────────
+     RESPONSIVE
+  ───────────────────────────────────── */
+  @media (max-width:1100px){
+    .featured-frame{display:none}
+    .hero-bottom{grid-template-columns:1fr 1fr}
+    .work-grid{gap:1.5rem}
+    .p-hero,.p-side,.p-half,.p-third,.p-wide{grid-column:span 6}
+    .case-grid,.about-grid,.recog-grid{grid-template-columns:1fr;gap:3rem}
+    .process-grid{grid-template-columns:1fr 1fr}
+    .end-grid{grid-template-columns:1fr;gap:3rem}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:2rem}
+  }
+  @media (max-width:680px){
+    nav{padding:1rem 1.2rem}
+    .nav-links{display:none}
+    .container,.end,footer{padding-left:1.2rem;padding-right:1.2rem}
+    .hero{padding:6rem 1.2rem 2rem}
+    .hero-bottom{grid-template-columns:1fr;gap:1.5rem}
+    .hero-stat{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:1rem}
+    .section-head{grid-template-columns:1fr;gap:1rem}
+    .section-head .aside{text-align:left}
+    .work-grid{grid-template-columns:1fr;gap:1.2rem}
+    .p-hero,.p-side,.p-half,.p-third,.p-wide{grid-column:1/-1}
+    .process-grid{grid-template-columns:1fr}
+    .award{grid-template-columns:60px 1fr 60px;gap:.8rem}
+    .award .org{display:none}
+    .toolset{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr;gap:1.5rem;margin-bottom:2rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav>
+  <div class="logo">
+    <div class="mark">M</div>
+    <span>Mrinmoy<i> · Editor</i></span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#work" data-num="01">Work</a>
+      <a href="#case" data-num="02">Case</a>
+      <a href="#process" data-num="03">Process</a>
+      <a href="#about" data-num="04">About</a>
+    </div>
+    <a href="#contact" class="nav-cta"><span class="pulse"></span>Available Q3</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-tag">
+    <span>Reel · MMXXVI</span>
+    <span class="live">Now Streaming</span>
+    <span class="tc">SCN_001 · TC 01:00:00:00</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="word"><span>Cuts</span></span>
+    <span class="word"><span><em>that</em></span></span>
+    <span class="word"><span>linger.</span></span>
+  </h1>
+
+  <div class="featured-frame">
+    <div class="ff-overlay">
+      <div class="top">
+        <span class="rec">REC · 4K</span>
+        <span>01:24:08</span>
+      </div>
+      <div class="bottom">
+        <div class="play"></div>
+        <div class="meta">
+          NOW PLAYING
+          <b>Long Way Home</b>
+          DIR. A. SEN · 2026
+        </div>
+      </div>
+    </div>
+    <div class="ff-progress"></div>
+  </div>
+
+  <div class="hero-bottom">
+    <p class="hero-lede">
+      I'm Mrinmoy — a video editor &amp; colorist shaping <em>rhythm, mood and meaning</em> from raw footage. Eight years on the timeline. Premiere, DaVinci, After Effects — wielded with intent.
+    </p>
+    <div class="hero-stat">
+      <div class="label">Films Cut</div>
+      <div class="num">142<sup>+</sup></div>
+    </div>
+    <div class="hero-stat">
+      <div class="label">On Timeline</div>
+      <div class="num">08<sup>YRS</sup></div>
+    </div>
+    <div class="hero-stat">
+      <div class="label">Awards</div>
+      <div class="num">14</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STATS BAND ═══════════════ -->
+<div class="stats-band">
+  <div class="stats-track">
+    <span><i>Vimeo</i> Staff Pick × 11<span class="pip"></span></span>
+    <span>Cannes Lion Shortlist '25<span class="pip"></span></span>
+    <span>D&amp;AD <i>Wood</i> '24<span class="pip"></span></span>
+    <span>Mumbai Film Fest <i>Selection</i><span class="pip"></span></span>
+    <span>Webby <i>Honor</i> '23<span class="pip"></span></span>
+    <span><i>Vimeo</i> Staff Pick × 11<span class="pip"></span></span>
+    <span>Cannes Lion Shortlist '25<span class="pip"></span></span>
+    <span>D&amp;AD <i>Wood</i> '24<span class="pip"></span></span>
+    <span>Mumbai Film Fest <i>Selection</i><span class="pip"></span></span>
+    <span>Webby <i>Honor</i> '23<span class="pip"></span></span>
+  </div>
+</div>
+
+<!-- ═══════════════ WORK ═══════════════ -->
+<section class="work-section" id="work">
+  <div class="container">
+    <div class="section-head">
+      <div class="num"><b>01</b>SELECTED WORK</div>
+      <h2>Seven films,<br>one <em>through-line.</em></h2>
+      <div class="aside"><b>2022 — 2026</b>Click any tile to play</div>
+    </div>
+
+    <div class="work-grid">
+
+      <!-- Hero spread -->
+      <a href="#" class="project p-hero">
+        <div class="frame">
+          <div class="image img-1"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">22:08 / DOC</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title">Long <em>Way Home</em></div>
+          <div class="project-meta"><b>Documentary</b>Festival Cut · 2026</div>
+        </div>
+      </a>
+
+      <!-- Side -->
+      <a href="#" class="project p-side">
+        <div class="frame">
+          <div class="image img-2"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">01:30 / BRAND</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title"><em>Vellum</em> Watches</div>
+          <div class="project-meta"><b>Brand Film</b>Patek Philippe · 2025</div>
+        </div>
+      </a>
+
+      <!-- Half + Half -->
+      <a href="#" class="project p-half">
+        <div class="frame">
+          <div class="image img-3"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">04:12 / MV</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title">A Soft <em>Falling</em></div>
+          <div class="project-meta"><b>Music Video</b>Phoebe Bridgers · 2025</div>
+        </div>
+      </a>
+
+      <a href="#" class="project p-half">
+        <div class="frame">
+          <div class="image img-4"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">11:00 / SHORT</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title">Sundown, <em>Tangier</em></div>
+          <div class="project-meta"><b>Short Film</b>Nat Geo · 2024</div>
+        </div>
+      </a>
+
+      <!-- Wide -->
+      <a href="#" class="project p-wide">
+        <div class="frame">
+          <div class="image img-6"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">02:48 / TRAILER</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title">The Quiet <em>House</em> · Trailer</div>
+          <div class="project-meta"><b>Feature Trailer</b>Mubi · 2024</div>
+        </div>
+      </a>
+
+      <!-- Third × 3 -->
+      <a href="#" class="project p-third">
+        <div class="frame">
+          <div class="image img-5"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">02:00 / FASHION</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title"><em>Phoenix</em> SS26</div>
+          <div class="project-meta"><b>Fashion Film</b>Loewe · 2023</div>
+        </div>
+      </a>
+
+      <a href="#" class="project p-third">
+        <div class="frame">
+          <div class="image img-7"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">06:30 / DOC</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title">River, <em>at Dusk</em></div>
+          <div class="project-meta"><b>Short Doc</b>Independent · 2023</div>
+        </div>
+      </a>
+
+      <a href="#" class="project p-third">
+        <div class="frame">
+          <div class="image img-1"></div>
+          <div class="play-badge"></div>
+          <span class="timecode-pill">00:45 / SPOT</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title"><em>Aesop</em> Marrakech</div>
+          <div class="project-meta"><b>Brand Spot</b>Aesop · 2022</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CASE STUDY ═══════════════ -->
+<section class="case" id="case">
+  <div class="container">
+    <div class="section-head">
+      <div class="num"><b>02</b>FEATURED CASE</div>
+      <h2>The cut behind<br>the <em>cut.</em></h2>
+      <div class="aside"><b>Long Way Home</b>22-minute documentary</div>
+    </div>
+
+    <div class="case-grid">
+      <div class="case-visual">
+        <div class="stamp"><b>CASE 01</b>Edit ·<br>Color ·<br>Sound</div>
+        <div class="play"></div>
+      </div>
+
+      <div class="case-text">
+        <div class="label">— A24 / DIRECTOR'S LAB · 2026</div>
+        <h3>Six months of footage,<br>shaped into <em>22 minutes.</em></h3>
+        <p class="director">Directed by Aritra Sen · Edited by Mrinmoy</p>
+
+        <p>Three editors had passed on the assembly. The footage was magnificent and structureless — a year in a returning migrant's life, shot in fragments across two continents. <em>The challenge wasn't what to use; it was what to leave out.</em></p>
+
+        <p>I started by stripping every voiceover. The film needed to find its rhythm in silence first. From there, the structure became musical — three movements, each landing on a held breath. The final cut came in at 22:08, almost exactly half the assembly's length.</p>
+
+        <div class="case-stats">
+          <div class="case-stat">
+            <div class="v">144 hrs</div>
+            <div class="l">Footage Reviewed</div>
+          </div>
+          <div class="case-stat">
+            <div class="v">22:08</div>
+            <div class="l">Final Runtime</div>
+          </div>
+          <div class="case-stat">
+            <div class="v">07</div>
+            <div class="l">Festival Selections</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PROCESS ═══════════════ -->
+<section class="process" id="process">
+  <div class="container">
+    <div class="section-head">
+      <div class="num"><b>03</b>PROCESS</div>
+      <h2>How a film <em>actually</em><br>finds its shape.</h2>
+      <div class="aside"><b>Four Stages</b>From rushes to release</div>
+    </div>
+
+    <div class="process-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Watch <em>twice,</em><br>cut once.</h4>
+        <p>I sit with footage before I touch it. The first pass is feeling. The second is structure. Only then does the timeline open.</p>
+        <div class="tag">Deliverable<br><b>Story Memo</b></div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Sound is half<br>the <em>image.</em></h4>
+        <p>A cut lands not on the frame but on the breath, the room tone, the silence before a word. Picture and sound, single instrument.</p>
+        <div class="tag">Deliverable<br><b>Rough Assembly</b></div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Color holds<br><em>memory.</em></h4>
+        <p>Grading isn't a finishing step. It's a memory the audience hasn't formed yet. Done well, no one notices it; everyone feels it.</p>
+        <div class="tag">Deliverable<br><b>Locked Cut + Grade</b></div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Cut for the<br><em>viewer.</em></h4>
+        <p>The director sees the shoot. The editor sees the audience. My job is to bridge the two without the seam ever showing.</p>
+        <div class="tag">Deliverable<br><b>Final Master</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ QUOTE ═══════════════ -->
+<section class="quote-section">
+  <div class="quote-block">
+    <div class="marks">"</div>
+    <blockquote>
+      Mrinmoy doesn't just cut film — he <em>finds</em> it. He took our messy 144-hour assembly and returned a 22-minute film that felt inevitable, like it had always existed and we'd simply been in its way.
+    </blockquote>
+    <div class="attribution">
+      <div class="avatar">A.</div>
+      <div class="who">
+        <b>Aritra Sen</b>
+        Director · Long Way Home
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="section-head">
+      <div class="num"><b>04</b>THE EDITOR</div>
+      <h2>Eight years in the<br>dark of the <em>edit suite.</em></h2>
+      <div class="aside"><b>Mrinmoy</b>Kolkata · Worldwide</div>
+    </div>
+
+    <div class="about-grid">
+      <div>
+        <div class="portrait"></div>
+        <div class="portrait-meta">
+          <span>Mrinmoy</span>
+          <span>EST. 2018</span>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <h3>Quiet rooms,<br>loud <em>decisions.</em></h3>
+        <p>I started cutting on a borrowed laptop in a kitchen in Kolkata. Music videos for friends, then commercials, then films that took me to rooms I didn't know existed. Somewhere along the way, the timeline stopped feeling like a tool and started feeling like a language.</p>
+        <p>I work best with directors who treat the edit as <em>a second draft of the script</em> — collaborators willing to murder their darlings for the sake of rhythm. I'm equally at home in a 90-second luxury spot and a 22-minute documentary. The medium changes; the discipline doesn't.</p>
+
+        <div class="toolset">
+          <div class="row"><span>Edit</span><b>Premiere · DaVinci · Avid</b></div>
+          <div class="row"><span>Color</span><b>DaVinci · Baselight</b></div>
+          <div class="row"><span>Motion</span><b>After Effects · C4D</b></div>
+          <div class="row"><span>Sound</span><b>Pro Tools · Audition</b></div>
+          <div class="row"><span>Format</span><b>Doc · Brand · Music · Trailer</b></div>
+          <div class="row"><span>Languages</span><b>English · Bangla · Hindi</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ AWARDS ═══════════════ -->
+<section class="recognition">
+  <div class="container">
+    <div class="recog-grid">
+      <h3>Selected<br><em>recognition.</em></h3>
+
+      <div class="award-list">
+        <div class="award">
+          <div class="yr">2026</div>
+          <div class="ti"><em>Long Way Home</em></div>
+          <div class="org">Sundance · Documentary Shorts</div>
+          <div class="res">Selection</div>
+        </div>
+        <div class="award">
+          <div class="yr">2025</div>
+          <div class="ti">Vellum Watches</div>
+          <div class="org">Cannes Lions · Film Craft</div>
+          <div class="res">Shortlist</div>
+        </div>
+        <div class="award">
+          <div class="yr">2025</div>
+          <div class="ti">A Soft <em>Falling</em></div>
+          <div class="org">UK Music Video Awards</div>
+          <div class="res">Best Edit · Nominee</div>
+        </div>
+        <div class="award">
+          <div class="yr">2024</div>
+          <div class="ti">Sundown, Tangier</div>
+          <div class="org">D&amp;AD · Film Craft</div>
+          <div class="res">Wood Pencil</div>
+        </div>
+        <div class="award">
+          <div class="yr">2024</div>
+          <div class="ti">The Quiet <em>House</em></div>
+          <div class="org">Mumbai Film Festival</div>
+          <div class="res">Selection</div>
+        </div>
+        <div class="award">
+          <div class="yr">2023</div>
+          <div class="ti">Phoenix SS26</div>
+          <div class="org">Vimeo Staff Pick</div>
+          <div class="res">Featured</div>
+        </div>
+        <div class="award">
+          <div class="yr">2023</div>
+          <div class="ti">Aesop <em>Marrakech</em></div>
+          <div class="org">Webby Awards</div>
+          <div class="res">Honor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ END / CTA ═══════════════ -->
+<section class="end" id="contact">
+  <div class="end-grid">
+    <div>
+      <div class="end-stamp">— End Card · 05 / FIN</div>
+      <h2>Have a film<br>that needs <em>a second<br>pair of eyes?</em></h2>
+    </div>
+
+    <div class="end-right">
+      <p>I take on three projects per quarter. If the brief is interesting and the deadline is honest, let's talk.</p>
+      <div class="cta-stack">
+        <a href="mailto:hello@mrinmoy.studio" class="cta-row">
+          <b>hello@mrinmoy.studio</b>
+          <span>WRITE →</span>
+        </a>
+        <a href="#" class="cta-row">
+          <b>Reel · 2026 (PDF)</b>
+          <span>DOWNLOAD ↓</span>
+        </a>
+        <a href="#" class="cta-row">
+          <b>Schedule a call</b>
+          <span>BOOK ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">Mrinmoy<em>.</em></div>
+    <div class="foot-col">
+      <h6>Studio</h6>
+      <a href="#work">Selected Work</a>
+      <a href="#case">Case Studies</a>
+      <a href="#process">Process</a>
+      <a href="#about">About</a>
+    </div>
+    <div class="foot-col">
+      <h6>Elsewhere</h6>
+      <a href="#">Vimeo</a>
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">IMDb</a>
+    </div>
+    <div class="foot-col">
+      <h6>Contact</h6>
+      <p>hello@mrinmoy.studio</p>
+      <p>+91 · Kolkata · IN</p>
+      <p>UTC +05:30</p>
+    </div>
+  </div>
+
+  <div class="foot-bottom">
+    <span>© Mrinmoy Studio · MMXXVI · All rights reserved</span>
+    <span>Site v3.1 — designed in the cut</span>
+  </div>
+</footer>
+
+<script>
+  // intersection reveal
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = 1;
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: .12 });
+
+  document.querySelectorAll('.project, .step, .award, .case-text, .case-visual, .about-right, .portrait, .quote-block').forEach(el => {
+    el.style.opacity = 0;
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1)';
+    io.observe(el);
+  });
+
+  // featured frame timecode tick
+  const ffTC = document.querySelector('.ff-overlay .top span:last-child');
+  let secs = 84 * 60 + 8;
+  setInterval(() => {
+    secs++;
+    const h = String(Math.floor(secs / 3600)).padStart(2,'0');
+    const m = String(Math.floor((secs % 3600) / 60)).padStart(2,'0');
+    const s = String(secs % 60).padStart(2,'0');
+    if (ffTC) ffTC.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+</script>
+
+</body>
+</html>

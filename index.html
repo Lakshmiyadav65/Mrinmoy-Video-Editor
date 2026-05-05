@@ -226,9 +226,10 @@
   .featured-frame{
     position:absolute;
     right:2.5rem;top:6.5rem;
-    width:340px;height:200px;
+    width:220px;
+    aspect-ratio:9/16;
     border:1px solid var(--line-strong);
-    background:var(--surface);
+    background:#000;
     overflow:hidden;
     z-index:5;
     box-shadow:0 30px 80px rgba(0,0,0,.5);
@@ -492,12 +493,11 @@
   }
   .project-meta b{color:var(--paper);font-weight:500;display:block}
 
-  /* layout sizes */
-  .p-hero{grid-column:span 8;aspect-ratio:16/9}
-  .p-side{grid-column:span 4;aspect-ratio:4/5}
-  .p-half{grid-column:span 6;aspect-ratio:4/3}
-  .p-third{grid-column:span 4;aspect-ratio:4/5}
-  .p-wide{grid-column:span 12;aspect-ratio:21/9}
+  /* layout sizes — uniform 9:16 vertical for shorts */
+  .p-hero,.p-side,.p-half,.p-third,.p-wide{
+    grid-column:span 3;
+    aspect-ratio:9/16;
+  }
   .project .frame{height:100%}
 
   /* ─────────────────────────────────────
@@ -532,15 +532,13 @@
     position:relative;z-index:2;
   }
   .case-visual{
-    display:block;
-    aspect-ratio:4/5;
+    aspect-ratio:9/16;
+    max-width:480px;
+    margin:0 auto;
     position:relative;
     overflow:hidden;
     border:1px solid var(--line-strong);
-    background:linear-gradient(135deg,#ff5b2e 0%,#7a1a0e 60%,#1a0806 100%);
-    text-decoration:none;
-    color:inherit;
-    cursor:pointer;
+    background:#000;
   }
   .case-visual::before{
     content:"";position:absolute;

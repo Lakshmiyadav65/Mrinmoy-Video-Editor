@@ -512,7 +512,7 @@
     overflow:hidden;
   }
   .case::before{
-    content:"CASE 01 / CASE 01 / CASE 01 / CASE 01 / ";
+    content:"TOOLKIT / TOOLKIT / TOOLKIT / TOOLKIT / ";
     position:absolute;top:1.5rem;left:0;right:0;
     font-family:'Fraunces',serif;
     font-style:italic;
@@ -523,6 +523,60 @@
     white-space:nowrap;
     pointer-events:none;
     letter-spacing:-.04em;
+  }
+
+  /* ─────────────────────────────────────
+     TOOLKIT (replaces case study)
+  ───────────────────────────────────── */
+  .kit-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5rem;
+    position:relative;
+    z-index:2;
+  }
+  .kit-col{display:flex;flex-direction:column}
+  .kit-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:1rem;
+    padding-bottom:1rem;
+    border-bottom:1px solid var(--line);
+  }
+  .kit-row{
+    display:grid;
+    grid-template-columns:34px 1fr auto;
+    gap:1.5rem;
+    align-items:baseline;
+    padding:1.4rem 0;
+    border-bottom:1px solid var(--line);
+    transition:padding .4s, border-color .4s;
+  }
+  .kit-row:hover{padding:1.7rem 0;border-color:var(--line-strong)}
+  .kit-row:hover .kit-name{color:var(--accent-soft)}
+  .kit-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.14em;
+    color:var(--accent);
+  }
+  .kit-name{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:1.55rem;
+    letter-spacing:-.02em;
+    line-height:1.1;
+    transition:color .4s;
+  }
+  .kit-name em{font-style:italic;color:var(--accent-soft);font-weight:400}
+  .kit-tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--paper-dim);
+    text-align:right;
+  }
+  @media (max-width:1100px){
+    .kit-grid{grid-template-columns:1fr;gap:2.5rem}
   }
   .case-grid{
     display:grid;
@@ -1065,7 +1119,7 @@
   <div class="nav-right">
     <div class="nav-links">
       <a href="#work" data-num="01">Work</a>
-      <a href="#case" data-num="02">Case</a>
+      <a href="#case" data-num="02">Toolkit</a>
       <a href="#process" data-num="03">Process</a>
       <a href="#about" data-num="04">About</a>
     </div>
@@ -1260,46 +1314,59 @@
   </div>
 </section>
 
-<!-- ═══════════════ CASE STUDY ═══════════════ -->
+<!-- ═══════════════ TOOLKIT ═══════════════ -->
 <section class="case" id="case">
   <div class="container">
     <div class="section-head">
-      <div class="num"><b>02</b>FEATURED CASE</div>
-      <h2>The cut behind<br>the <em>cut.</em></h2>
-      <div class="aside"><b>Long Way Home</b>22-minute documentary</div>
+      <div class="num"><b>02</b>TOOLKIT</div>
+      <h2>The stack behind<br>every <em>frame.</em></h2>
+      <div class="aside"><b>AI · Edit · Color · Sound</b>Daily drivers</div>
     </div>
 
-    <div class="case-grid">
-      <div class="case-visual">
-        <iframe class="cv-video"
-          src="https://www.youtube.com/embed/NzYkxIvSPTM?modestbranding=1&rel=0&playsinline=1&iv_load_policy=3"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          frameborder="0"></iframe>
-        <div class="stamp"><b>CASE 01</b>Edit ·<br>Color ·<br>Sound</div>
+    <div class="kit-grid">
+      <div class="kit-col">
+        <div class="kit-label">— AI · Generation · Voice</div>
+        <div class="kit-list">
+          <div class="kit-row">
+            <span class="kit-num">01</span>
+            <span class="kit-name">Higgsfield</span>
+            <span class="kit-tag">AI Video</span>
+          </div>
+          <div class="kit-row">
+            <span class="kit-num">02</span>
+            <span class="kit-name"><em>HeyGen</em></span>
+            <span class="kit-tag">AI Avatars</span>
+          </div>
+          <div class="kit-row">
+            <span class="kit-num">03</span>
+            <span class="kit-name">Claude <em>AI</em></span>
+            <span class="kit-tag">Script · Ideation</span>
+          </div>
+          <div class="kit-row">
+            <span class="kit-num">04</span>
+            <span class="kit-name"><em>ElevenLabs</em></span>
+            <span class="kit-tag">Voice · Audio</span>
+          </div>
+        </div>
       </div>
 
-      <div class="case-text">
-        <div class="label">— A24 / DIRECTOR'S LAB · 2026</div>
-        <h3>Six months of footage,<br>shaped into <em>22 minutes.</em></h3>
-        <p class="director">Directed by Aritra Sen · Edited by Mrinmoy</p>
-
-        <p>Three editors had passed on the assembly. The footage was magnificent and structureless — a year in a returning migrant's life, shot in fragments across two continents. <em>The challenge wasn't what to use; it was what to leave out.</em></p>
-
-        <p>I started by stripping every voiceover. The film needed to find its rhythm in silence first. From there, the structure became musical — three movements, each landing on a held breath. The final cut came in at 22:08, almost exactly half the assembly's length.</p>
-
-        <div class="case-stats">
-          <div class="case-stat">
-            <div class="v">144 hrs</div>
-            <div class="l">Footage Reviewed</div>
+      <div class="kit-col">
+        <div class="kit-label">— Edit · Color · Finish</div>
+        <div class="kit-list">
+          <div class="kit-row">
+            <span class="kit-num">05</span>
+            <span class="kit-name">Adobe <em>Premiere Pro</em></span>
+            <span class="kit-tag">Edit</span>
           </div>
-          <div class="case-stat">
-            <div class="v">22:08</div>
-            <div class="l">Final Runtime</div>
+          <div class="kit-row">
+            <span class="kit-num">06</span>
+            <span class="kit-name">DaVinci <em>Resolve</em></span>
+            <span class="kit-tag">Color · Grade</span>
           </div>
-          <div class="case-stat">
-            <div class="v">07</div>
-            <div class="l">Festival Selections</div>
+          <div class="kit-row">
+            <span class="kit-num">07</span>
+            <span class="kit-name">CapCut <em>Pro</em></span>
+            <span class="kit-tag">Shorts · Mobile</span>
           </div>
         </div>
       </div>
@@ -1386,12 +1453,12 @@
         <p>I work best with directors who treat the edit as <em>a second draft of the script</em> — collaborators willing to murder their darlings for the sake of rhythm. I'm equally at home in a 90-second luxury spot and a 22-minute documentary. The medium changes; the discipline doesn't.</p>
 
         <div class="toolset">
-          <div class="row"><span>Edit</span><b>Premiere · DaVinci · Avid</b></div>
-          <div class="row"><span>Color</span><b>DaVinci · Baselight</b></div>
-          <div class="row"><span>Motion</span><b>After Effects · C4D</b></div>
-          <div class="row"><span>Sound</span><b>Pro Tools · Audition</b></div>
-          <div class="row"><span>Format</span><b>Doc · Brand · Music · Trailer</b></div>
-          <div class="row"><span>Languages</span><b>English · Bangla · Hindi</b></div>
+          <div class="row"><span>Edit</span><b>Premiere Pro · CapCut Pro</b></div>
+          <div class="row"><span>Color</span><b>DaVinci Resolve</b></div>
+          <div class="row"><span>AI Video</span><b>Higgsfield · HeyGen</b></div>
+          <div class="row"><span>Voice</span><b>ElevenLabs</b></div>
+          <div class="row"><span>Script · AI</span><b>Claude AI</b></div>
+          <div class="row"><span>Format</span><b>Shorts · Reels · YT</b></div>
         </div>
       </div>
     </div>
@@ -1523,7 +1590,7 @@
     });
   }, { threshold: .12 });
 
-  document.querySelectorAll('.project, .step, .award, .case-text, .case-visual, .about-right, .portrait, .quote-block').forEach(el => {
+  document.querySelectorAll('.project, .step, .award, .kit-col, .kit-row, .about-right, .portrait, .quote-block').forEach(el => {
     el.style.opacity = 0;
     el.style.transform = 'translateY(30px)';
     el.style.transition = 'opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1)';

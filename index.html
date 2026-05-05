@@ -245,6 +245,35 @@
     cursor:grabbing;
     box-shadow:0 40px 100px rgba(0,0,0,.7);
   }
+  .drag-hint{
+    position:absolute;
+    top:-14px;
+    left:50%;
+    z-index:10;
+    background:var(--accent);
+    color:var(--bg);
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-weight:600;
+    padding:.4rem .75rem;
+    border-radius:100px;
+    white-space:nowrap;
+    pointer-events:none;
+    box-shadow:0 6px 18px rgba(255,91,46,.5);
+    animation:dragHintBob 1.8s ease-in-out infinite;
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  @keyframes dragHintBob{
+    0%,100%{transform:translate(-50%,0)}
+    50%{transform:translate(-50%,-5px)}
+  }
+  .featured-frame.drag-known .drag-hint{
+    opacity:0;
+    transform:translate(-50%,-14px);
+    pointer-events:none;
+  }
   .featured-frame::before{
     content:"";position:absolute;inset:0;
     background:
@@ -1146,6 +1175,7 @@
   </h1>
 
   <a href="https://youtube.com/shorts/kphmCZFJzyM" target="_blank" rel="noopener" class="featured-frame">
+    <span class="drag-hint" aria-hidden="true">✥ Drag me</span>
     <iframe class="ff-video"
       src="https://www.youtube.com/embed/kphmCZFJzyM?autoplay=1&mute=1&loop=1&playlist=kphmCZFJzyM&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3"
       allow="autoplay; encrypted-media; picture-in-picture"
@@ -1642,12 +1672,12 @@
       el.classList.remove('is-dragging');
     }
 
-    el.addEventListener('mousedown', (e) => { e.preventDefault(); start(e.clientX, e.clientY); });
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); el.classList.add('drag-known'); start(e.clientX, e.clientY); });
     window.addEventListener('mousemove', (e) => move(e.clientX, e.clientY));
     window.addEventListener('mouseup', end);
 
     el.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY);
+      if (e.touches.length === 1) { el.classList.add('drag-known'); start(e.touches[0].clientX, e.touches[0].clientY); }
     }, { passive: true });
     window.addEventListener('touchmove', (e) => {
       if (dragging && e.touches.length === 1){

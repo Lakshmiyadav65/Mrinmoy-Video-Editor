@@ -245,35 +245,6 @@
     cursor:grabbing;
     box-shadow:0 40px 100px rgba(0,0,0,.7);
   }
-  .drag-hint{
-    position:absolute;
-    bottom:14px;
-    left:50%;
-    z-index:10;
-    background:var(--accent);
-    color:var(--bg);
-    font-family:'JetBrains Mono',monospace;
-    font-size:10px;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    font-weight:600;
-    padding:.45rem .85rem;
-    border-radius:100px;
-    white-space:nowrap;
-    pointer-events:none;
-    box-shadow:0 6px 22px rgba(255,91,46,.65), 0 0 0 1px rgba(255,255,255,.18);
-    animation:dragHintBob 1.6s ease-in-out infinite;
-    transition:opacity .4s ease, transform .4s ease;
-  }
-  @keyframes dragHintBob{
-    0%,100%{transform:translate(-50%,0)}
-    50%{transform:translate(-50%,-6px)}
-  }
-  .featured-frame.drag-known .drag-hint{
-    opacity:0;
-    transform:translate(-50%,8px);
-    pointer-events:none;
-  }
   .featured-frame::before{
     content:"";position:absolute;inset:0;
     background:
@@ -1175,7 +1146,6 @@
   </h1>
 
   <a href="https://youtube.com/shorts/kphmCZFJzyM" target="_blank" rel="noopener" class="featured-frame">
-    <span class="drag-hint" aria-hidden="true">✥ Drag me</span>
     <iframe class="ff-video"
       src="https://www.youtube.com/embed/kphmCZFJzyM?autoplay=1&mute=1&loop=1&playlist=kphmCZFJzyM&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3"
       allow="autoplay; encrypted-media; picture-in-picture"
@@ -1643,51 +1613,67 @@
     io.observe(el);
   });
 
-  // draggable featured frame
+  // floating + draggable featured frame
   (function(){
     const el = document.querySelector('.featured-frame');
     if (!el) return;
-    let dragging = false;
-    let startX = 0, startY = 0;
-    let offsetX = 0, offsetY = 0;
-    let moved = 0;
 
-    function start(x, y){
+    let dragging = false;
+    let moved = 0;
+    let startX = 0, startY = 0;
+    let dragX = 0, dragY = 0;
+    let autoX = 0, autoY = 0;
+    const t0 = performance.now();
+    let pausedAt = 0;
+    let pausedTotal = 0;
+
+    function loop(){
+      if (!dragging){
+        const t = (performance.now() - t0 - pausedTotal) / 1000;
+        autoX = Math.sin(t * 0.55) * 14;
+        autoY = Math.cos(t * 0.40) * 11;
+      }
+      el.style.transform = `translate(${autoX + dragX}px, ${autoY + dragY}px)`;
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    function startDrag(x, y){
       dragging = true;
       moved = 0;
-      startX = x - offsetX;
-      startY = y - offsetY;
+      pausedAt = performance.now();
+      startX = x - dragX;
+      startY = y - dragY;
       el.classList.add('is-dragging');
     }
-    function move(x, y){
+    function moveDrag(x, y){
       if (!dragging) return;
       const nx = x - startX, ny = y - startY;
-      moved = Math.max(moved, Math.hypot(nx - offsetX, ny - offsetY));
-      offsetX = nx; offsetY = ny;
-      el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      moved = Math.max(moved, Math.hypot(nx - dragX, ny - dragY));
+      dragX = nx; dragY = ny;
     }
-    function end(){
+    function endDrag(){
       if (!dragging) return;
+      pausedTotal += performance.now() - pausedAt;
       dragging = false;
       el.classList.remove('is-dragging');
     }
 
-    el.addEventListener('mousedown', (e) => { e.preventDefault(); el.classList.add('drag-known'); start(e.clientX, e.clientY); });
-    window.addEventListener('mousemove', (e) => move(e.clientX, e.clientY));
-    window.addEventListener('mouseup', end);
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+    window.addEventListener('mouseup', endDrag);
 
     el.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) { el.classList.add('drag-known'); start(e.touches[0].clientX, e.touches[0].clientY); }
+      if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
     window.addEventListener('touchmove', (e) => {
       if (dragging && e.touches.length === 1){
         e.preventDefault();
-        move(e.touches[0].clientX, e.touches[0].clientY);
+        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
       }
     }, { passive: false });
-    window.addEventListener('touchend', end);
+    window.addEventListener('touchend', endDrag);
 
-    // suppress link navigation if the user actually dragged
     el.addEventListener('click', (e) => { if (moved > 5) e.preventDefault(); });
   })();
 

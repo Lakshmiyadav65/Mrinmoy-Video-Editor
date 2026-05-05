@@ -297,6 +297,22 @@
     width:34%;background:var(--accent);
     box-shadow:0 0 8px var(--accent);
   }
+  .ff-video{
+    position:absolute;
+    inset:0;
+    width:100%;height:100%;
+    border:0;
+    z-index:1;
+    pointer-events:none;
+  }
+  .cv-video{
+    position:absolute;
+    inset:0;
+    width:100%;height:100%;
+    border:0;
+    z-index:1;
+  }
+  .case-visual .stamp{z-index:2;pointer-events:none}
 
   /* ─────────────────────────────────────
      STATS BAND
@@ -1074,6 +1090,10 @@
   </h1>
 
   <a href="https://youtube.com/shorts/NzYkxIvSPTM" target="_blank" rel="noopener" class="featured-frame">
+    <iframe class="ff-video"
+      src="https://www.youtube.com/embed/NzYkxIvSPTM?autoplay=1&mute=1&loop=1&playlist=NzYkxIvSPTM&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      frameborder="0"></iframe>
     <div class="ff-overlay">
       <div class="top">
         <span class="rec">REC · 4K</span>
@@ -1252,10 +1272,14 @@
     </div>
 
     <div class="case-grid">
-      <a href="https://youtube.com/shorts/NzYkxIvSPTM" target="_blank" rel="noopener" class="case-visual">
+      <div class="case-visual">
+        <iframe class="cv-video"
+          src="https://www.youtube.com/embed/NzYkxIvSPTM?modestbranding=1&rel=0&playsinline=1&iv_load_policy=3"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          frameborder="0"></iframe>
         <div class="stamp"><b>CASE 01</b>Edit ·<br>Color ·<br>Sound</div>
-        <div class="play"></div>
-      </a>
+      </div>
 
       <div class="case-text">
         <div class="label">— A24 / DIRECTOR'S LAB · 2026</div>

@@ -235,7 +235,15 @@
     box-shadow:0 30px 80px rgba(0,0,0,.5);
     text-decoration:none;
     color:inherit;
-    cursor:pointer;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:none;
+    will-change:transform;
+  }
+  .featured-frame.is-dragging{
+    cursor:grabbing;
+    box-shadow:0 40px 100px rgba(0,0,0,.7);
   }
   .featured-frame::before{
     content:"";position:absolute;inset:0;
@@ -1604,6 +1612,54 @@
     el.style.transition = 'opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1)';
     io.observe(el);
   });
+
+  // draggable featured frame
+  (function(){
+    const el = document.querySelector('.featured-frame');
+    if (!el) return;
+    let dragging = false;
+    let startX = 0, startY = 0;
+    let offsetX = 0, offsetY = 0;
+    let moved = 0;
+
+    function start(x, y){
+      dragging = true;
+      moved = 0;
+      startX = x - offsetX;
+      startY = y - offsetY;
+      el.classList.add('is-dragging');
+    }
+    function move(x, y){
+      if (!dragging) return;
+      const nx = x - startX, ny = y - startY;
+      moved = Math.max(moved, Math.hypot(nx - offsetX, ny - offsetY));
+      offsetX = nx; offsetY = ny;
+      el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    }
+    function end(){
+      if (!dragging) return;
+      dragging = false;
+      el.classList.remove('is-dragging');
+    }
+
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); start(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', (e) => move(e.clientX, e.clientY));
+    window.addEventListener('mouseup', end);
+
+    el.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (dragging && e.touches.length === 1){
+        e.preventDefault();
+        move(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+    window.addEventListener('touchend', end);
+
+    // suppress link navigation if the user actually dragged
+    el.addEventListener('click', (e) => { if (moved > 5) e.preventDefault(); });
+  })();
 
   // featured frame timecode tick
   const ffTC = document.querySelector('.ff-overlay .top span:last-child');

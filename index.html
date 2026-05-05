@@ -1034,13 +1034,42 @@
     background:var(--bg);
     padding:4rem 2.5rem 2rem;
   }
+  .foot-marquee{
+    overflow:hidden;
+    margin-bottom:2.5rem;
+    padding:1.5rem 0;
+    border-bottom:1px solid var(--line);
+  }
+  .foot-marquee-track{
+    display:flex;
+    width:max-content;
+    white-space:nowrap;
+    animation:footSlide 22s linear infinite;
+    font-family:'Fraunces',serif;
+    font-weight:200;
+    font-size:clamp(4rem,13vw,13rem);
+    line-height:.85;
+    letter-spacing:-.045em;
+    color:var(--paper);
+  }
+  .foot-marquee-track span{
+    padding:0 1.2rem;
+    display:inline-block;
+  }
+  .foot-marquee-track em{
+    font-style:italic;
+    color:var(--accent);
+  }
+  .foot-marquee:hover .foot-marquee-track{animation-play-state:paused}
+  @keyframes footSlide{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
   .foot-grid{
     max-width:1440px;margin:0 auto;
     display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:3rem;
-    flex-wrap:wrap;
+    justify-content:flex-end;
+    align-items:center;
   }
   .foot-email{
     font-family:'Fraunces',serif;
@@ -1500,7 +1529,7 @@
   <div class="end-grid">
     <div>
       <div class="end-stamp">— End Card · 05 / FIN</div>
-      <h2>Have a film<br>that needs <em>a second<br>pair of eyes?</em></h2>
+      <h2>Have a Raw Content<br>that needs <em>a second<br>pair of eyes?</em></h2>
     </div>
 
     <div class="end-right">
@@ -1525,8 +1554,19 @@
 
 <!-- ═══════════════ FOOTER ═══════════════ -->
 <footer>
+  <div class="foot-marquee" aria-hidden="true">
+    <div class="foot-marquee-track">
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+      <span>Mrinmoy<em>.</em></span>
+    </div>
+  </div>
   <div class="foot-grid">
-    <div class="foot-brand">Mrinmoy<em>.</em></div>
     <a class="foot-email" href="mailto:mrinmoydeoraja0@gmail.com">mrinmoydeoraja0@gmail.com</a>
   </div>
 </footer>

@@ -1036,11 +1036,25 @@
   }
   .foot-grid{
     max-width:1440px;margin:0 auto;
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr 1fr;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
     gap:3rem;
-    margin-bottom:4rem;
+    flex-wrap:wrap;
   }
+  .foot-email{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(1.1rem,2vw,1.6rem);
+    letter-spacing:-.01em;
+    color:var(--paper);
+    text-decoration:none;
+    padding-bottom:.5rem;
+    border-bottom:1px solid var(--line);
+    transition:color .25s, border-color .25s;
+  }
+  .foot-email:hover{color:var(--accent);border-color:var(--accent)}
   .foot-brand{
     font-family:'Fraunces',serif;
     font-weight:200;
@@ -1513,31 +1527,7 @@
 <footer>
   <div class="foot-grid">
     <div class="foot-brand">Mrinmoy<em>.</em></div>
-    <div class="foot-col">
-      <h6>Studio</h6>
-      <a href="#work">Selected Work</a>
-      <a href="#case">Case Studies</a>
-      <a href="#process">Process</a>
-      <a href="#about">About</a>
-    </div>
-    <div class="foot-col">
-      <h6>Elsewhere</h6>
-      <a href="#">Vimeo</a>
-      <a href="#">Instagram</a>
-      <a href="#">LinkedIn</a>
-      <a href="#">IMDb</a>
-    </div>
-    <div class="foot-col">
-      <h6>Contact</h6>
-      <p>mrinmoydeoraja0@gmail.com</p>
-      <p>+91 · Kolkata · IN</p>
-      <p>UTC +05:30</p>
-    </div>
-  </div>
-
-  <div class="foot-bottom">
-    <span>© Mrinmoy Studio · MMXXVI · All rights reserved</span>
-    <span>Site v3.1 — designed in the cut</span>
+    <a class="foot-email" href="mailto:mrinmoydeoraja0@gmail.com">mrinmoydeoraja0@gmail.com</a>
   </div>
 </footer>
 
